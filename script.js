@@ -1,4 +1,4 @@
-// Підключення Firebase SDK
+// Підключення до Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyBeNVkrZpo1f5Bi7NdrlXqa5agtoK66wb8",
   authDomain: "chatsite-88697.firebaseapp.com",
@@ -11,16 +11,12 @@ const firebaseConfig = {
 
 // Ініціалізація Firebase
 firebase.initializeApp(firebaseConfig);
-
-// Створюємо з'єднання з Firestore (для збереження повідомлень)
 const db = firebase.firestore();
-
-// Створюємо з'єднання з Firebase Storage (для завантаження фото)
 const storage = firebase.storage();
 
-// Отримуємо параметр кімнати (для вибору чату)
+// Отримуємо чат з URL
 const params = new URLSearchParams(window.location.search);
-const room = params.get('room');
+const room = params.get('room') || "obgovori";
 document.getElementById('room-name').innerText = room === "stanov" ? "Становясь волшебніцей" : "Обговори";
 
 // Відображення повідомлень
@@ -38,8 +34,8 @@ db.collection(room).orderBy("timestamp").onSnapshot(snapshot => {
 // Функція для відправки повідомлень
 function sendMessage() {
     const messageInput = document.getElementById('message');
-    const text = messageInput.value;
-    if (text.trim() === "") return;
+    const text = messageInput.value.trim();
+    if (text === "") return;
 
     db.collection(room).add({
         text: text,
@@ -49,20 +45,21 @@ function sendMessage() {
     messageInput.value = "";
 }
 
-// Функція для завантаження фото в Firebase Storage
-function uploadImage(file) {
+// Функція для завантаження фото
+function uploadImage() {
+    const fileInput = document.getElementById('image');
+    const file = fileInput.files[0];
+    if (!file) return;
+
     const storageRef = storage.ref();
     const fileRef = storageRef.child('images/' + file.name);
+    
     fileRef.put(file).then(() => {
-        alert("Фото завантажено!");
+        fileRef.getDownloadURL().then(url => {
+            db.collection(room).add({
+                text: url,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            });
+        });
     });
 }
-
-// Обробка фото в полі input
-const imageInput = document.getElementById('image');
-imageInput.addEventListener('change', function(event) {
-    const file = event.target.files[0];
-    if (file) {
-        uploadImage(file);
-    }
-});
