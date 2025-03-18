@@ -4,17 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Чат</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage.js"></script>
+    <script defer src="script.js"></script>
 </head>
 <body>
-    <h1 id="room-name"></h1>
-    <div id="chat"></div>
-    <input type="text" id="message" placeholder="Напишіть повідомлення">
-    <input type="file" id="image">
-    <button onclick="sendMessage()">Надіслати</button>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js"></script>
-    <script src="script.js"></script>
+
+    <div class="chat-container">
+        <h1 id="room-name">Чат</h1>
+        
+        <div class="buttons">
+            <a href="?room=stanov" class="chat-button">Становясь волшебніцей</a>
+            <a href="?room=obgovori" class="chat-button">Обговори</a>
+        </div>
+
+        <div id="chat"></div>
+
+        <div class="input-container">
+            <input type="text" id="message" placeholder="Напишіть повідомлення...">
+            <button onclick="sendMessage()">Надіслати</button>
+        </div>
+
+        <div class="input-container">
+            <input type="file" id="image">
+            <button onclick="uploadImage()">Завантажити фото</button>
+        </div>
+    </div>
+
 </body>
 </html>
